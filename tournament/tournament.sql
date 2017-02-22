@@ -6,8 +6,7 @@
 -- You can write comments in this file by starting them with two dashes, like
 -- these lines here.
 
-CREATE table Players (ID serial primary key, fullname text, wins integer, matches integer) ;
+CREATE table Players (ID serial primary key, fullname text, wins integer default 0, matches integer default 0) ;
 
-CREATE table Matches (match_ID serial, winner serial references Players(ID), loser serial references Players(ID) ); 
+CREATE table Matches (match_ID serial, winner integer references Players(ID), loser integer references Players(ID) ); 
 
-Create view wins as select count(winner) group by Player.id
