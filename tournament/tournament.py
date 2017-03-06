@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# 
-# tournament.py -- implementation of a Swiss-system tournament
-#
+#tournament.py -- implementation of a Swiss-system tournament
 
 import psycopg2
 import bleach
@@ -12,11 +10,12 @@ def connect():
     return psycopg2.connect("dbname=tournament")
 
 def deleteMatches():
-    """Remove all the match records from the database."""
+"""Remove all the match records from the database."""
+
     db= psycopg2.connect("dbname=tournament")
     cur = db.cursor()
     cur.execute ("DELETE FROM Matches")
-    cur.execute("UPDATE players SET wins = 0 , matches = 0")
+    cur.execute("UPDATE players SET wins = 0, matches = 0")
     db.commit()
     cur.close()
 
@@ -24,17 +23,19 @@ def deleteMatches():
 
 def deletePlayers():
     """Remove all the player records from the database."""
+
     db= psycopg2.connect("dbname=tournament")
     cur = db.cursor()
-    cur.execute ( "DELETE FROM Players")
+    cur.execute("DELETE FROM Players")
     db.commit()
     cur.close()
 
 def countPlayers():
     """Returns the number of players currently registered."""
+   
     db= psycopg2.connect("dbname=tournament")
     cur = db.cursor()
-    cur.execute("SELECT count(*) FROM Players ")
+    cur.execute("SELECT count(*) FROM Players")
     player_s = cur.fetchone()[0]
     db.commit()
     cur.close()
@@ -51,6 +52,7 @@ def registerPlayer(name):
       name: the player's full name (need not be unique).
 
     """
+   
     db= psycopg2.connect("dbname=tournament")
     cur = db.cursor()
     cur.execute("INSERT INTO Players(fullname) values(%s)",(name,))
@@ -70,6 +72,7 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+
     db= psycopg2.connect("dbname=tournament")
     cur = db.cursor()
     cur.execute("SELECT * FROM PLAYERS order by wins")
@@ -79,10 +82,6 @@ def playerStandings():
     db.commit()
     cur.close()
     return ranks
-    # db.commit()
-    # cur.close()
-
-
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
@@ -91,6 +90,7 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+
     db= psycopg2.connect("dbname=tournament")
     cur = db.cursor()
     cur.execute("INSERT INTO Matches (winner,loser) values (%s,%s)",(winner,loser,))
@@ -117,6 +117,7 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+
     db=psycopg2.connect("dbname=tournament")
     cur = db.cursor()
     pairi = []
@@ -130,7 +131,5 @@ def swissPairings():
         return pairi
     db.commit()
     cur.close()
-    # for pairs in pairing:
-        
-    #     return pairing
+   
 
