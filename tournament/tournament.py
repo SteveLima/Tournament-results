@@ -4,18 +4,16 @@
 import psycopg2
 import bleach
 
-
 def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
     return psycopg2.connect("dbname=tournament")
 
 def deleteMatches():
-"""Remove all the match records from the database."""
+    """Remove all the match records from the database."""
 
-    db= psycopg2.connect("dbname=tournament")
+    db = connect()
     cur = db.cursor()
     cur.execute ("DELETE FROM Matches")
-    cur.execute("UPDATE players SET wins = 0, matches = 0")
     db.commit()
     cur.close()
 
@@ -24,7 +22,7 @@ def deleteMatches():
 def deletePlayers():
     """Remove all the player records from the database."""
 
-    db= psycopg2.connect("dbname=tournament")
+    db = connect()
     cur = db.cursor()
     cur.execute("DELETE FROM Players")
     db.commit()
@@ -33,7 +31,7 @@ def deletePlayers():
 def countPlayers():
     """Returns the number of players currently registered."""
    
-    db= psycopg2.connect("dbname=tournament")
+    db = connect()
     cur = db.cursor()
     cur.execute("SELECT count(*) FROM Players")
     player_s = cur.fetchone()[0]
@@ -53,7 +51,7 @@ def registerPlayer(name):
 
     """
    
-    db= psycopg2.connect("dbname=tournament")
+    db= connect()
     cur = db.cursor()
     cur.execute("INSERT INTO Players(fullname) values(%s)",(name,))
     db.commit()
@@ -73,15 +71,17 @@ def playerStandings():
         matches: the number of matches the player has played
     """
 
-    db= psycopg2.connect("dbname=tournament")
+    db= connect()
     cur = db.cursor()
-    cur.execute("SELECT * FROM PLAYERS order by wins")
-    ranks = []
-    for row in cur.fetchall():
-        ranks.append(row)
+    cur.execute("SELECT * FROM player_standings order by wins")
+    # s =[]
+    f = cur.fetchall()
+    # s.append(f)
+    return f
     db.commit()
     cur.close()
-    return ranks
+    
+    
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
@@ -91,17 +91,15 @@ def reportMatch(winner, loser):
       loser:  the id number of the player who lost
     """
 
-    db= psycopg2.connect("dbname=tournament")
+    db= connect()
     cur = db.cursor()
     cur.execute("INSERT INTO Matches (winner,loser) values (%s,%s)",(winner,loser,))
-    cur.execute("UPDATE players SET wins = wins+1, matches = matches+1 WHERE id =(%s)",(winner,))
-    cur.execute("UPDATE Players SET matches = matches +1 WHERE id = (%s)",(loser,))
     db.commit()
     cur.close()
 
 
  
- 
+
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
   
@@ -118,7 +116,7 @@ def swissPairings():
         name2: the second player's name
     """
 
-    db=psycopg2.connect("dbname=tournament")
+    db = connect()
     cur = db.cursor()
     pairi = []
     cur.execute("select id,fullname from players order by wins desc")
@@ -131,5 +129,4 @@ def swissPairings():
         return pairi
     db.commit()
     cur.close()
-   
-
+    
