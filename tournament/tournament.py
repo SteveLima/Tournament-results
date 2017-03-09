@@ -73,7 +73,7 @@ def playerStandings():
 
     db= connect()
     cur = db.cursor()
-    cur.execute("SELECT * FROM player_standings order by wins")
+    cur.execute("SELECT * FROM player_wins order by wins")
     # s =[]
     f = cur.fetchall()
     # s.append(f)
@@ -119,7 +119,8 @@ def swissPairings():
     db = connect()
     cur = db.cursor()
     pairi = []
-    cur.execute("select id,fullname from players order by wins desc")
+    # playerStandings()
+    cur.execute("select id,fullname from player_wins order by wins desc")
     value =cur.fetchall()
     for i in range(1, len(value), 2):
         one = value[i - 1]
